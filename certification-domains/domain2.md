@@ -2,8 +2,8 @@
 
 ## **Domain 2: Claude Models, Prompting & Context Engineering (13%)**
 
-**Exam version:** July 2026 (CCAR-P v1.0)\
-**Domain weight:** 13%\
+**Exam version:** July 2026 (CCAR-P v1.0)
+**Domain weight:** 13%
 
 > **Scope:** This study guide follows the July 2026 exam blueprint, not the December 2026 revision. Model specifications and platform capabilities are discussed from the July 2026 perspective.
 
@@ -1887,10 +1887,6 @@ Use:
 - **Agent Skills** for specialized, on-demand instructions.
 
 # **12. References**
-
-## **Primary Exam Reference**
-
-1\. [Claude Certified Architect – Professional Exam Guide](https://github.com/sarveshtalele/claude-architect-exam-guide/blob/main/professional/study-materials/Claude%20Certified%20Architect%20-%20Professional%20Exam%20Guide.pdf?utm_source=chatgpt.com)
 
 ## **Anthropic Documentation**
 
