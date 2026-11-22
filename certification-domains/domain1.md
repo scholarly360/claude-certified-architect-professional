@@ -1,510 +1,969 @@
-# Claude Certified Architect – Professional
+# **Claude Certified Architect – Professional (CCA-P)**
 
-## Domain 1: Solution Design & Architecture (17%)
+## **Domain 1: Solution Design & Architecture (17%)**
 
-**Blueprint scope:** July 2026 (not December 2026)  
-**Focus:** Architecture selection, decision criteria, best practices, trade-offs, and scenario-based exam tasks.  
-**Primary reference:** [Claude Certified Architect – Professional Exam Guide 
+**Exam scope:** July 2026 (Version 1.0)\
+**Focus:** Architectural decision-making, pattern selection, orchestration, decomposition, and business outcomes.
 
-> **Central exam principle:** Choose the simplest architecture that satisfies the business requirements, quality constraints, risk tolerance, and operational SLAs. More autonomy or more agents do not inherently make an architecture better.
+⭐ **Core exam principle:** Choose the simplest architecture that meets the business requirements, quality thresholds, security constraints, and performance SLAs. Add agentic complexity only when evidence justifies it.
 
-**Objectives covered**
+## **Domain 1 — Official Task Statements**
 
-1. Translate business problems into Claude-based AI solutions.
-2. Design end-to-end architectures from input through processing, output, and feedback.
-3. Select the appropriate pattern: workflow, agentic, or augmented LLM.
-4. Design multi-agent systems and orchestration strategies.
-5. Decompose complex problems into manageable subtasks.
-6. Align designs with efficiency, transformation, productivity, cost, and performance SLAs.
+The July 2026 blueprint defines six task statements.
 
----
+| #   | Official task statement                                                                                      | Priority for revision |
+| --- | ------------------------------------------------------------------------------------------------------------ | --------------------- |
+| 1.1 | Translate business problems into Claude-based AI solutions                                                   | ⭐ High                |
+| 1.2 | Design end-to-end architectures (input → processing → output → feedback loops)                               | ⭐ High                |
+| 1.3 | Select appropriate architectural patterns (workflow, agentic, augmented LLM)                                 | ⭐ Critical            |
+| 1.4 | Design multi-agent systems and orchestration strategies                                                      | ⭐ Critical            |
+| 1.5 | Apply decomposition techniques for complex problem solving                                                   | ⭐ High                |
+| 1.6 | Align solutions to business value pillars (efficiency, transformation, productivity, cost, performance SLAs) | ⭐ High                |
 
-## 1. Core Concepts
+The priority labels are study recommendations, not official per-task exam weights.
 
-### 1.1 Translate business problems into Claude-based solutions
+# **Part 1: Per Sub-Domain Breakdown**
 
-The solution architect's first task is to convert a business goal into a measurable system specification—not immediately to select a model or construct an agent.
+## **1.1 Translate Business Problems into Claude-Based AI Solutions**
 
-**Example requirement:** “Our legal team spends three hours reviewing each vendor contract. Reduce this effort with Claude.”
+### **Core Concept**
 
-| Dimension | Example requirement or decision |
-|---|---|
-| Business objective | Reduce manual review effort by 60%. |
-| Inputs | Contracts, approved legal playbooks, standard clauses. |
-| Processing | Extract clauses, compare with the playbook, identify deviations. |
-| Outputs | Structured findings with evidence references and a reviewable report. |
-| Quality target | High recall for critical-risk clauses; establish an acceptable false-negative rate. |
-| Human oversight | Legal approval for high-impact conclusions and final dispositions. |
-| Operational constraints | Throughput, cost per document, P95 turnaround, auditability. |
-| Feedback | Capture reviewer corrections for offline evaluation and improvement. |
+Translate an ambiguous business requirement into a **measurable, technically feasible, and appropriately governed AI solution**.
 
-**Decision criteria:**
+The architect must determine:
 
-- What measurable business outcome defines success?
-- Which actions are advisory, and which are consequential or irreversible?
-- What are the accuracy, latency, throughput, cost, and availability requirements?
-- What ground-truth examples and evaluation methods exist?
-- Which decisions require deterministic rules or human approval?
+- Whether the task actually requires an LLM.
+- Which activities should use Claude versus deterministic software.
+- What information, integrations, and human approvals are required.
+- Whether the expected benefit justifies the operational cost.
+- How success will be measured against the existing process.
 
-**Exam rule:** Define success criteria and constraints before selecting the architecture.
+**The solution should be driven by business requirements, not model capabilities.**
 
-### 1.2 Select the appropriate architectural pattern
+### **Decision Criteria**
 
-Anthropic distinguishes **workflows** (the application controls a predetermined execution path) from **agents** (the model dynamically directs its process and tool usage). An **augmented LLM** adds facilities such as retrieval, tools, and memory without necessarily requiring a multi-step workflow.
+| Business requirement                              | Preferred architectural decision             |
+| ------------------------------------------------- | -------------------------------------------- |
+| Fixed calculations and predictable business rules | Deterministic code or rules engine           |
+| Semantic extraction from unstructured documents   | Claude with structured output and validation |
+| Questions requiring enterprise knowledge          | Retrieval-augmented Claude                   |
+| Known multistep business process                  | Predefined workflow                          |
+| Unpredictable investigation requiring tools       | Agentic system                               |
+| High-stakes or irreversible decisions             | Claude assistance with human approval        |
+| Large volumes of independent, nonurgent tasks     | Asynchronous batch processing                |
 
-| Pattern | Best fit | Trade-off |
-|---|---|---|
-| Augmented LLM | Grounded Q&A, summaries, straightforward extraction | Limited explicit orchestration |
-| Prompt chaining | Known sequential subtasks | Increased cumulative latency |
-| Routing | Different request types need different treatment | Misclassification can select the wrong route |
-| Parallelization | Independent, known subtasks | Aggregation and coordination overhead |
-| Orchestrator–workers | Subtasks vary dynamically by request | Coordination complexity and additional tokens |
-| Evaluator–optimizer | Iterative refinement against usable evaluation criteria | Repeated inference and potentially variable latency |
-| Autonomous agent | Open-ended planning and dynamic tool use | Less predictability, operational risk, and cost |
+**Example: Contract review automation**
 
-**Architecture-selection heuristic** (a study aid, not an official decision tree):
+Business request: "Reduce contract review turnaround from three days to six hours."
 
-```mermaid
-flowchart TD
-    A[Business problem and constraints] --> B{Can one grounded Claude call solve it reliably?}
-    B -->|Yes| C[Augmented LLM]
-    B -->|No| D{Are the steps known in advance?}
-    D -->|Yes| E[Controlled workflow]
-    D -->|No| F{Are independent subtasks known in advance?}
-    F -->|Yes| G[Parallel workflow]
-    F -->|No| H{Must subtasks be discovered dynamically?}
-    H -->|Yes| I[Orchestrator–workers]
-    H -->|No| J[Consider a bounded autonomous agent]
-    E --> K[Validate against cost, quality, latency and risk]
-    C --> K
-    G --> K
-    I --> K
-    J --> K
+A suitable architecture could automate classification, clause extraction, deviation identification, and drafting of review summaries, while retaining human approval for consequential legal decisions.
+
+### **Canonical Skeleton**
+
+```
+Business Problem
+      |
+      v
+Define Business Objective and Baseline
+      |
+      v
+Identify Tasks and Decision Points
+      |
+      v
+Classify Tasks
+  |          |          |
+Rules       Claude     Human
+  |          |          |
+  +----------+----------+
+             |
+             v
+Define Quality, Risk, Cost and SLA Constraints
+             |
+             v
+Select Minimal Viable Architecture
+             |
+             v
+Build Evaluation Dataset and Pilot
+             |
+             v
+Measure Business Outcomes
+             |
+             v
+Deploy / Improve / Reject
 ```
 
-This diagram is a simplification. Routing, prompt chaining, parallelization, and evaluator–optimizer can be combined, and a workflow may contain bounded agentic steps.
+### **Best Practices**
 
-**Exam rule:** Choose added autonomy only when it solves a real need for dynamic planning or tool selection.
+1. ⭐ Define explicit, measurable success criteria before selecting a model or developing prompts.
+2. Start with a simple Claude call; introduce retrieval, tools, workflows, or agents only when necessary.
+3. Keep deterministic calculations, access enforcement, and reliable business rules in conventional software.
+4. Place human review where errors could cause significant harm or irreversible consequences.
+5. Evaluate against representative real-world cases, including failures and edge conditions.
 
-### 1.3 Design an end-to-end architecture
+Anthropic guidance: [Building effective agents](https://www.anthropic.com/research/building-effective-agents?utm_source=chatgpt.com) and [Define success criteria and build evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests?utm_source=chatgpt.com).
 
-The requested design is **input → processing → output → feedback**, with production controls around each transition.
+### **Exam Traps**
 
-```mermaid
-flowchart TD
-    A[Input: request, documents, events] --> B[Validate input and establish trusted context]
-    B --> C[Retrieve, route, or preprocess]
-    C --> D[Claude: prompt, workflow, tools, or agents]
-    D --> E[Validate outputs and evidence]
-    E --> F{Approval or exception required?}
-    F -->|Yes| G[Human reviewer or exception queue]
-    F -->|No| H[Deliver business result]
-    G --> H
-    H --> I[Capture outcomes, errors and corrections]
-    I --> J[Evaluate proposed improvements]
-    J -.->|Controlled release| C
+| Trap                                            | Why it is tempting                                        | Why it is wrong                                                               |
+| ----------------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Use Claude for every business-process step      | Creates an apparently unified AI solution                 | Deterministic tasks may be cheaper, faster, and more reliable in code         |
+| Select the most capable model first             | Assumes model capability is the primary design constraint | Business requirements, risk, workload, and SLA must determine model selection |
+| Fully automate all decisions                    | Maximizes apparent efficiency                             | High-stakes decisions may require accountable human oversight                 |
+| Optimize prompt quality before defining success | Prompt improvements are easy to demonstrate               | A technically impressive response may deliver no measurable business value    |
+
+**⭐ Exam heuristic:** When a scenario begins with a vague business request, choose the option that clarifies measurable outcomes, task boundaries, and constraints before committing to an architecture.
+
+## **1.2 Design End-to-End Architectures (Input → Processing → Output → Feedback Loops)**
+
+### **Core Concept**
+
+An end-to-end Claude architecture includes more than an LLM endpoint. It encompasses the complete lifecycle of a request, from ingestion to validated output, operational monitoring, and iterative improvement.
+
+A production architecture must consider:
+
+- Input ingestion and validation.
+- Authentication, authorization, and data access controls.
+- Retrieval and context preparation.
+- Model inference and tool execution.
+- Output validation and downstream integration.
+- Feedback, evaluation, observability, and recovery.
+
+**Architectural quality is determined by the reliability of the entire pipeline, not solely by model accuracy.**
+
+### **Canonical Skeleton**
+
+```
+                  USER / ENTERPRISE SYSTEM
+                           |
+                           v
+                API Gateway / Authentication
+                           |
+                           v
+                 Input Validation / Policy
+                           |
+                           v
+                  Context Preparation
+                  /                 \
+         Retrieval / RAG       Approved Tools
+                  \                 /
+                   v               v
+                     Claude Model
+                           |
+                           v
+                  Output Validation
+                  /                \
+             Valid                Invalid
+               |                     |
+               v                     v
+        Business Workflow       Retry / Repair /
+               |                 Human Escalation
+               v
+       Human Approval (if needed)
+               |
+               v
+        Final Output / Action
+               |
+               v
+        Feedback and Monitoring
+               |
+               v
+        Evaluation and Iteration
 ```
 
-**Production principles:**
+Security, authorization checks, tracing, and cost monitoring should apply across the relevant stages rather than only at the beginning or end.
 
-- Validate inputs, permissions, and source data before inference.
-- Separate probabilistic model judgments from deterministic policies and authorizations.
-- Use structured outputs and enforce schema or business-rule checks outside the model.
-- Require explicit approval for high-impact or irreversible actions.
-- Define retry, fallback, timeout, and exception-handling behavior.
-- Capture quality, latency, cost, failure rates, and reviewer corrections.
-- Evaluate changes offline before promoting them to production.
+### **Architecture Layer Responsibilities**
 
-A conversation log alone is **not** a meaningful feedback loop. The system must translate observed outcomes into measurable, governed improvements.
+| Layer     | Responsibility                       | Typical controls                                |
+| --------- | ------------------------------------ | ----------------------------------------------- |
+| Input     | Accept and normalize inputs          | Schema validation, size limits, input filtering |
+| Context   | Supply relevant enterprise knowledge | Access-controlled retrieval, freshness checks   |
+| Reasoning | Perform semantic analysis            | Model selection, prompts, token budgets         |
+| Tools     | Access external systems              | Least privilege, allowlists, timeouts           |
+| Output    | Produce consumable results           | Schema validation, evidence verification        |
+| Execution | Trigger downstream actions           | Authorization, idempotency, approval            |
+| Feedback  | Measure and improve results          | Evals, logs, traces, human corrections          |
 
-### 1.4 Design multi-agent systems and orchestration
+### **Best Practices**
 
-Multi-agent designs are useful when work can be delegated to distinct specialists and especially when the decomposition depends on intermediate discoveries.
+1. ⭐ Separate model reasoning from deterministic application logic and authorization enforcement.
+2. Give Claude only the relevant, authorized context required for the task.
+3. Validate tool arguments and outputs using application code; treat retrieved content and tool responses as untrusted.
+4. Capture end-to-end traces, including retrieval results, tool calls, errors, latency, tokens, and costs, subject to privacy controls.
+5. Design explicit retry, fallback, timeout, and escalation paths.
 
-**Example:** M&A due diligence may require different financial, legal, regulatory, technical, and market investigations for each target.
+A Claude `tool_use` request is not itself a completed external action. For client tools, the application executes the requested operation and returns a corresponding `tool_result`.
 
-```mermaid
-flowchart TD
-    U[User research goal] --> O[Lead orchestrator]
-    O --> P[Plan and scope investigations]
-    P --> F[Financial specialist]
-    P --> L[Legal specialist]
-    P --> M[Market specialist]
-    F --> S[Synthesis and evidence validation]
-    L --> S
-    M --> S
-    S --> R[Grounded due-diligence report]
+Reference: [Tool use with Claude](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview?utm_source=chatgpt.com).
+
+### **Exam Traps**
+
+| Trap                                 | Why tempting                                    | Why wrong                                                                                 |
+| ------------------------------------ | ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| RAG guarantees factual correctness   | Relevant documents appear to ground the answer  | Retrieval can return stale or irrelevant content, and the model may still misinterpret it |
+| Prompt instructions enforce security | System prompts can describe access restrictions | Authorization must also be enforced outside the model                                     |
+| Logging final outputs is sufficient  | User-visible errors are easy to identify        | Root-cause analysis often requires intermediate retrieval and tool traces                 |
+| Retry every failed operation         | Retries often fix transient problems            | Retrying non-idempotent operations may duplicate side effects                             |
+
+**⭐ Exam heuristic:** For production-architecture questions, prefer the answer with explicit input controls, intermediate validation, authorization, recovery, observability, and feedback—not merely a more capable model.
+
+## **1.3 Select Appropriate Architectural Patterns (Workflow, Agentic, Augmented LLM)**
+
+### **Core Concept**
+
+This is one of the most important architectural distinctions in Domain 1.
+
+Anthropic differentiates between:
+
+- **Augmented LLM:** A Claude call enhanced with retrieval, tools, or memory.
+- **Workflow:** LLM calls and tools follow predefined, application-controlled paths.
+- **Agent:** Claude dynamically decides its next steps and tool usage to accomplish a goal.
+
+An augmented LLM is a building block, not a mutually exclusive alternative to workflows and agents. Both workflows and agents may use retrieval, tools, and memory.
+
+### **Canonical Skeleton: Architectural Selection**
+
+```
+Is a conventional deterministic solution sufficient?
+                  |
+           +------+------+
+           |             |
+          Yes            No
+           |             |
+        Use code     Can one Claude call
+                     solve the task?
+                           |
+                     +-----+-----+
+                     |           |
+                    Yes          No
+                     |           |
+               Augmented LLM   Are steps known?
+                                  |
+                            +-----+-----+
+                            |           |
+                           Yes          No
+                            |           |
+                     Fixed Workflow   Agentic Loop
+                            |           |
+                            +-----+-----+
+                                  |
+                       Need independent exploration
+                       beyond a single agent?
+                                  |
+                            +-----+-----+
+                            |           |
+                           No          Yes
+                            |           |
+                      Keep simple   Consider
+                                    Multi-Agent
 ```
 
-Each worker needs:
+### **Pattern Selection Matrix**
 
-- A bounded objective and explicit completion criteria.
-- Only the tools and permissions required for that task.
-- The relevant context, rather than indiscriminately copying all prior context.
-- A defined output schema, evidence expectations, and error behavior.
-- Limits on time, calls, tokens, and retries.
+| Pattern              | When to use                                               | Main benefit                   | Main cost or limitation              |
+| -------------------- | --------------------------------------------------------- | ------------------------------ | ------------------------------------ |
+| Single Claude call   | Simple, bounded task                                      | Low orchestration overhead     | Limited decomposition                |
+| Augmented LLM        | Knowledge-intensive task requiring context or tools       | Capability extension           | Retrieval/tool failure risks         |
+| Prompt chaining      | Known sequential stages                                   | Better stage-level control     | Increased latency                    |
+| Routing              | Clearly different task categories                         | Specialized prompts and models | Classification errors                |
+| Parallelization      | Independent subtasks                                      | Reduced wall-clock time        | Additional concurrent resource usage |
+| Orchestrator-workers | Dynamic subtasks determined by input                      | Flexible delegation            | Coordination and token overhead      |
+| Evaluator-optimizer  | Output can be iteratively improved against clear criteria | Higher quality                 | Additional calls and possible loops  |
+| Autonomous agent     | Unknown sequence of actions                               | Adaptive problem-solving       | Less predictable cost and behavior   |
 
-**Distinctions to know:**
+### **Canonical Workflow Patterns**
 
-- **Fixed parallel workflow:** The application already knows which tasks to launch.
-- **Orchestrator–workers:** A lead coordinator chooses or creates tasks dynamically.
-- **Autonomous agent:** The model controls its ongoing next-step decisions based on tool results.
+**1. Prompt chaining**
 
-Multiple Claude calls do **not** automatically constitute an agentic or multi-agent architecture.
-
-### 1.5 Decompose complex problems
-
-Decomposition turns broad goals into bounded, verifiable subtasks.
-
-**Sequential decomposition** applies when one step depends on another:
-
-```mermaid
-flowchart LR
-    A[Extract clauses] --> B[Compare to approved playbook]
-    B --> C[Identify deviations]
-    C --> D[Generate review report]
+```
+Input -> Step A -> Validate -> Step B -> Validate -> Output
 ```
 
-**Parallel decomposition** applies when work is independent:
+Use when intermediate results must be available before the next operation.
 
-```mermaid
-flowchart TD
-    A[Ingest evidence] --> F[Financial review]
-    A --> L[Legal review]
-    A --> M[Market review]
-    F --> S[Consolidated findings]
-    L --> S
-    M --> S
+**2. Routing**
+
+```
+Input -> Classifier -> Specialist A / B / C -> Output
 ```
 
-**Implementation concerns:**
+Use when categories need materially different handling.
 
-- Define schemas and expected outputs between stages.
-- Decide where validation gates belong.
-- Preserve provenance for conclusions and citations.
-- Anticipate partial failures and retry semantics.
-- Limit shared mutable state across concurrent workers.
-- Avoid parallelizing steps that rely on unresolved dependencies.
+**3. Parallelization**
 
-### 1.6 Align architecture with business value
-
-The objective is not architectural sophistication: it is measurable business value under operational constraints.
-
-| Business pillar | What to optimize | Possible metric |
-|---|---|---|
-| Efficiency | Less manual effort, shorter cycle time | Minutes per review |
-| Transformation | Previously impractical or unavailable capabilities | Number of enabled workflows |
-| Productivity | More valuable output per employee | Cases reviewed per analyst |
-| Cost | End-to-end cost of a successful outcome | Cost per approved case |
-| Performance SLAs | Predictable responsiveness and reliability | P95 latency, availability, error rate |
-
-**Important distinction:** Cost per token is not necessarily cost per *successful* business outcome. A low-cost response requiring substantial reviewer rework may be more expensive end to end.
-
-Similarly, meeting average latency does not prove compliance with a **P95** latency SLA.
-
----
-
-## 2. Canonical Skeleton
-
-### 2.1 Eight-step architecture framework
-
-1. **Frame:** Establish business outcomes, baseline, risks, quality targets, and SLAs.
-2. **Ground:** Identify sources, retrieval requirements, permissions, and integrations.
-3. **Choose:** Select augmented LLM, controlled workflow, or agentic execution.
-4. **Decompose:** Establish sequential and parallel subtasks with clear interfaces.
-5. **Orchestrate:** Define tools, permissions, execution bounds, and error recovery.
-6. **Validate:** Check structured outputs, evidence, business rules, and human approvals.
-7. **Operate:** Monitor quality, latency, throughput, reliability, and cost.
-8. **Improve:** Convert feedback into test cases, evaluate, and release changes through governance.
-
-### 2.2 Architecture decision checklist
-
-Ask these questions before selecting an exam answer:
-
-1. Is the task sufficiently predictable to be represented as application-controlled steps?
-2. Does Claude need external knowledge, tools, or both?
-3. Are the subtasks predetermined or discovered dynamically?
-4. Which subtasks are genuinely independent?
-5. What happens if a model or tool produces an incorrect or incomplete result?
-6. Which quality, latency, budget, security, and approval limits apply?
-7. Is the proposed complexity justified by measurable benefits?
-
-### 2.3 Canonical example: contract risk review
-
-```mermaid
-flowchart TD
-    A[Contract uploaded] --> B[Extract document content]
-    B --> C[Classify provisions]
-    C --> D[Retrieve approved legal playbook]
-    D --> E[Claude assesses deviations]
-    E --> F{Validate structured findings}
-    F -->|Invalid| R[Retry or exception queue]
-    F -->|Valid| G{Critical risk?}
-    G -->|Yes| H[Legal reviewer approval]
-    G -->|No| I[Generate draft report]
-    H --> I
-    I --> J[Store report and evidence]
-    J --> K[Capture reviewer corrections]
-    K --> L[Offline evaluation and improvement]
+```
+                -> Worker A -
+Input -> Split  -> Worker B -> Aggregate -> Output
+                -> Worker C -
 ```
 
-**Why this design fits:**
+Use for independent subtasks or independent perspectives.
 
-- The stages are mostly predictable, favoring a controlled workflow.
-- Retrieval supplies current, approved playbook context.
-- Claude performs semantic analysis while code enforces policy and permissions.
-- Critical decisions have human approval gates.
-- Corrections feed a governed evaluation process.
+**4. Orchestrator-workers**
 
-A multi-agent expansion becomes justifiable only when the work evolves into unpredictable, independent investigations that cannot be efficiently handled by the simpler workflow.
+```
+Input -> Orchestrator -> Dynamic Worker Creation
+                              |
+                         Worker Results
+                              |
+                         Synthesis -> Output
+```
 
----
+Use when the work cannot be fully decomposed beforehand.
 
-## 3. Exam Traps
+**5. Evaluator-optimizer**
 
-| Common trap | Correct reasoning |
-|---|---|
-| 1. Always choose an agent for a complex problem. | Complexity alone does not require autonomy. Use an agent when dynamic planning and actions are necessary. |
-| 2. More agents always improve accuracy. | More agents increase coordination, token usage, failure modes, and possibly latency. |
-| 3. RAG is inherently agentic. | Retrieval-augmented generation can be a simple, non-agentic pattern. |
-| 4. Using tools automatically makes a system an agent. | A fixed application workflow can call tools without transferring process control to the model. |
-| 5. Parallel execution is always faster. | Independence, overhead, rate limits, aggregation, and dependencies affect performance. |
-| 6. Evaluator–optimizer guarantees correctness. | Evaluators can be wrong; use testable criteria and bounded iteration. |
-| 7. Use one large model for every task. | Routing, specialist handling, or deterministic logic can offer better quality and cost. |
-| 8. Successful inference means the business process succeeded. | Model success is not proof of correct, approved, end-to-end business completion. |
-| 9. Logging creates continuous learning. | Feedback must be curated, evaluated, and released safely. |
-| 10. Optimize average latency to satisfy an SLA. | A P95 SLA requires tail-latency measurement on representative workloads. |
+```
+Generate -> Evaluate -> Pass?
+                        |
+                  No -> Revise
+                        |
+                  Yes -> Output
+```
 
-### High-probability distractors
+Use when clear grading criteria support useful iteration.
 
-**Weak answer:** Give Claude unrestricted autonomy to reduce manual effort.  
-**Why it is weak:** Predictable processes, irreversible actions, and permission boundaries require controls.
+**6. Agentic loop**
 
-**Weak answer:** Create multiple specialist agents for every extraction task.  
-**Why it is weak:** A single augmented LLM or controlled pipeline may meet the requirements at lower cost and operational risk.
+```
+Goal -> Claude -> Select Tool -> Execute
+           ^                      |
+           |------ Observation ---|
+           |
+       Stop when goal met
+       or budget exhausted
+```
 
-**Stronger answer:** Use bounded execution, explicit stage interfaces, independent validation, measurable quality gates, and human oversight where required.
+### **Decision Trade-Offs**
 
----
+| Condition                                      | Prefer                         |
+| ---------------------------------------------- | ------------------------------ |
+| Strict latency and predictable processing      | Single call or simple workflow |
+| Independent analysis tasks                     | Parallelization                |
+| Highly variable tool exploration               | Agent                          |
+| Distinct request categories                    | Routing                        |
+| Verifiable intermediate stages                 | Prompt chaining with gates     |
+| Repeated refinement against an explicit rubric | Evaluator-optimizer            |
+| Multiple independent research directions       | Orchestrator-workers           |
 
-## 4. Key Facts to Memorize
+### **Best Practices**
 
-| Concept | Exam-ready fact |
-|---|---|
-| Workflow vs. agent | Application code controls a workflow; the model dynamically controls an agent's decisions. |
-| Augmented LLM | An LLM enhanced with capabilities such as retrieval, tools, or memory. |
-| Prompt chaining | Fixed sequence of model tasks with intermediate outputs or checks. |
-| Routing | Classify a request and dispatch it to the appropriate branch. |
-| Parallelization | Run independent, known subtasks concurrently. |
-| Orchestrator–workers | Coordinator dynamically identifies and delegates subtasks. |
-| Evaluator–optimizer | Generate, evaluate, and revise against explicit criteria. |
-| Multi-agent overhead | More coordination, context management, inference and operational complexity. |
-| Feedback loop | Capture outcomes, evaluate mistakes, and safely improve the system. |
-| Business value | Optimize measurable outcomes, not model or agent count. |
+1. ⭐ Begin with the simplest composable pattern that achieves the required outcome.
+2. Distinguish **application-controlled workflow** from **model-controlled agent behavior**.
+3. Use agents when flexibility is essential, not merely because tools are involved.
+4. Test whether additional stages or agents improve task success enough to justify latency and cost.
+5. Define termination criteria for iterative workflows and agents.
 
-### Three distinctions to master
+These patterns follow Anthropic's December 2024 architecture guidance: [Building effective agents](https://www.anthropic.com/research/building-effective-agents?utm_source=chatgpt.com).
 
-**A. Workflow vs. agent:** A workflow follows an application-defined process; an agent chooses steps as it proceeds.
+### **Exam Traps**
 
-**B. Parallelization vs. orchestrator–workers:** Ordinary parallelism follows a predefined task list; an orchestrator discovers task assignments dynamically.
+| Trap                                        | Why tempting                                    | Why wrong                                                                                |
+| ------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Every tool-using system is an agent         | Tool use looks agentic                          | A fixed workflow can call tools without delegating control flow to Claude                |
+| Multi-agent is always superior              | More agents appear to provide more intelligence | Coordination, token usage, and failure surfaces can increase                             |
+| RAG is itself an autonomous agent           | Retrieval extends model capabilities            | Static retrieval does not necessarily involve dynamic planning                           |
+| Routing and orchestration are equivalent    | Both assign tasks to specialized processors     | Routing selects among predefined branches; orchestration may dynamically create subtasks |
+| Evaluator-optimizer always improves outputs | Revisions sound inherently valuable             | Weak grading criteria can produce unnecessary or harmful iterations                      |
 
-**C. Latency vs. total cost:** Parallelism may shorten elapsed time even if it increases total consumption and coordination overhead.
+**⭐ Exam heuristic:** Known steps → workflow. Unknown steps → agent. Independent work → parallelize. Dynamic decomposition → orchestrator-workers. Clear iterative grading → evaluator-optimizer.
 
-A simple performance intuition is:
+## **1.4 Design Multi-Agent Systems and Orchestration Strategies**
 
-\[
-T_{\text{sequential}} \approx \sum_{i=1}^{n} T_i
-\]
+### **Core Concept**
 
-\[
-T_{\text{parallel}} \approx \max(T_1,\ldots,T_n)+T_{\text{overhead}}
-\]
+Multi-agent systems employ multiple Claude instances or agent processes with distinct objectives, tool access, or context.
 
-These are explanatory engineering approximations, **not official exam formulas**. Real behavior also depends on rate limits, queueing, retries, and dependencies.
+The objective is not simply to increase the number of agents. It is to improve task performance by dividing complex work into **meaningfully independent or specialized activities**.
 
----
+A central orchestrator may handle planning, task assignment, coordination, synthesis, and escalation.
 
-## 5. Five Exam-Style Questions, Answers, and Explanations
+Multi-agent architectures are most useful when:
 
-> These are **original practice questions**, not actual exam questions. Select the **best** option unless otherwise specified.
+- A problem requires broad exploration.
+- Independent research directions can execute concurrently.
+- Specialists require different tools or instructions.
+- A single context window becomes operationally inefficient.
+- The quality improvement justifies the extra compute and coordination.
 
-### Question 1 — Translate business requirements
+### **Canonical Skeleton: Orchestrator–Worker Architecture**
 
-**Difficulty:** Moderate
+```
+                     User Request
+                          |
+                          v
+                    Lead Agent
+                    /        \
+             Task Planning   Budget and Policy
+                    |
+          +---------+---------+
+          |         |         |
+          v         v         v
+      Worker A   Worker B   Worker C
+      Legal      Finance    Technical
+          |         |         |
+       Tools A   Tools B   Tools C
+          |         |         |
+          +---------+---------+
+                    |
+                    v
+             Evidence Aggregation
+                    |
+                    v
+               Lead Agent
+                    |
+                    v
+            Verification / Review
+                    |
+                    v
+                Final Result
+```
 
-A multinational company's procurement director wants Claude to reduce vendor contract-review effort by 70%. The team has 400 sample contracts but has not established accuracy requirements or defined which decisions require legal approval.
+### **Orchestration Strategy Comparison**
 
-**What should the solution architect do FIRST?**
+| Strategy                   | Control mechanism                               | Best fit                     |
+| -------------------------- | ----------------------------------------------- | ---------------------------- |
+| Sequential delegation      | Each worker completes before the next begins    | Dependent stages             |
+| Parallel delegation        | Workers execute independently                   | Research breadth and speed   |
+| Hierarchical orchestration | Lead agent delegates to specialized workers     | Complex, dynamic tasks       |
+| Fixed specialist workflow  | Application code invokes predefined specialists | Predictable processes        |
+| Evaluator-worker loop      | Critic reviews and requests revisions           | Quality-sensitive generation |
 
-A. Select the most capable Claude model and build an autonomous contract-review agent.  
-B. Define measurable business outcomes, error tolerance, approval requirements, representative test cases, and operational constraints.  
-C. Create four specialist agents for extraction, risk analysis, compliance, and reporting.  
-D. Fine-tune the solution on all 400 contracts before establishing quality metrics.
+### **Agent Contract**
 
-**Correct answer: B**
+Every delegated task should specify:
 
-**Explanation:** Architecture follows business outcomes and risk boundaries. Establish the baseline, target quality, permitted automation, representative evaluations, available evidence, and SLAs before deciding on model, workflow, or agents.
+```
+objective: "Identify material financial risks"
+scope: "Financial statements for the specified period"
+tools: ["approved_financial_search"]
+inputs: ["company_id", "reporting_period"]
+outputs:
+  findings: "structured list"
+  evidence: "source references"
+  unresolved_questions: "list"
+constraints:
+  max_steps: "configured workload limit"
+  max_budget: "configured cost limit"
+  write_access: false
+completion: "Return findings and uncertainties to orchestrator"
+```
 
-**Why the distractors are wrong:**
+The contract is an illustrative design convention, not a mandatory Anthropic API schema.
 
-- **A:** Prematurely chooses both the model and autonomy level.
-- **C:** Introduces distributed complexity without evidence of need.
-- **D:** Chooses a training technique before defining the problem and evaluation method.
+### **Best Practices**
 
-**Exam takeaway:** Begin with measurable requirements, not model or agent selection.
+1. ⭐ Delegate bounded objectives with clear input/output contracts, evidence requirements, and task boundaries.
+2. Give each worker only the tools and context it needs.
+3. Parallelize independent exploration but preserve sequential dependencies.
+4. Apply budgets, timeouts, concurrency limits, and stopping conditions.
+5. Have the orchestrator verify, reconcile, and synthesize worker results instead of merely concatenating them.
 
-### Question 2 — Select the appropriate workflow
+Anthropic's multi-agent research architecture uses a lead agent, parallel subagents, and a final synthesis process. Its published internal experiment showed substantial gains on broad research tasks, but those results are **not universal performance guarantees**.
 
-**Difficulty:** Moderate
+Reference: [How we built our multi-agent research system](https://www.anthropic.com/research/multi-agent-research-system?utm_source=chatgpt.com).
 
-An insurer processes claims using five known steps: document classification, information extraction, policy lookup, eligibility checking, and draft decision generation. Payment approval is restricted to authorized staff. Stages must remain auditable and predictable.
+### **Exam Traps**
 
-**Which design is MOST appropriate?**
+| Trap                                                   | Why tempting                         | Why wrong                                                                    |
+| ------------------------------------------------------ | ------------------------------------ | ---------------------------------------------------------------------------- |
+| Spawn as many agents as possible                       | Maximizes apparent parallelism       | Duplicated work and coordination overhead can overwhelm the benefit          |
+| Give all workers full conversation history             | Appears to preserve shared knowledge | Creates unnecessary context growth and weakens isolation                     |
+| Let every agent invoke production write tools          | Provides maximum autonomy            | Expands risk and makes side effects difficult to control                     |
+| Assume parallel agents automatically reduce total cost | Parallel completion is faster        | Total token usage and tool costs may rise significantly                      |
+| Combine worker answers without verification            | Minimizes orchestration logic        | Results can conflict, duplicate evidence, or contain unsupported conclusions |
 
-A. A fully autonomous agent that chooses every processing step and can authorize payments.  
-B. A deterministic workflow using Claude for semantic subtasks, explicit validation between stages, and human approval for payment.  
-C. An unrestricted orchestrator that dynamically creates new specialist agents for every claim.  
-D. One large Claude prompt that performs extraction, eligibility checking, authorization, and payment without intermediate checks.
+**⭐ Exam heuristic:** Select multi-agent architecture when tasks are sufficiently independent, the problem benefits from specialized context or tools, and the value of improved performance exceeds coordination costs.
 
-**Correct answer: B**
+## **1.5 Apply Decomposition Techniques for Complex Problem Solving**
 
-**Explanation:** This is a known business process. Keep orchestration under application control, use Claude where language understanding is needed, and enforce checks and approval outside the model. This meets predictability, auditability, and authorization requirements.
+### **Core Concept**
 
-**Why the distractors are wrong:**
+Decomposition breaks a complex objective into smaller, verifiable units of work.
 
-- **A:** Unnecessary autonomy and an inappropriate authorization boundary.
-- **C:** Dynamic orchestration is not needed for a fixed procedure.
-- **D:** Collapses validation, decision support, and authorization into a single model interaction.
+The primary design challenge is determining **how to split the work while preserving necessary dependencies and avoiding unnecessary communication**.
 
-**Exam takeaway:** Predictable process + controlled risk = deterministic workflow.
+Decomposition is broader than multi-agent design. It can be implemented using ordinary code, sequential Claude calls, parallel workers, or dynamic agents.
 
-### Question 3 — Multi-agent orchestration
+### **Canonical Skeleton**
 
-**Difficulty:** Hard
+```
+Complex Objective
+       |
+       v
+Identify Required Outputs
+       |
+       v
+Break into Subtasks
+       |
+       v
+Map Dependencies
+       |
+       v
+Choose Execution Strategy
+       |
+       +---- Dependent ------> Sequential
+       |
+       +---- Independent ----> Parallel
+       |
+       +---- Unpredictable --> Dynamic Agent
+       |
+       v
+Define Intermediate Output Contracts
+       |
+       v
+Execute and Validate
+       |
+       v
+Aggregate Results
+       |
+       v
+Final Verification
+```
 
-An investment research platform investigates potential acquisition targets. Each target requires a different combination of financial, regulatory, technical, legal, and market investigations. The relevant subtasks cannot reliably be decided before reviewing initial evidence. The final report must consolidate findings and sources.
+### **Decomposition Methods**
 
-**Which architecture BEST fits?**
+| Technique                  | Description                                 | Best use                                 |
+| -------------------------- | ------------------------------------------- | ---------------------------------------- |
+| Sequential decomposition   | Output of one stage feeds the next          | Extraction → validation → synthesis      |
+| Functional decomposition   | Split by distinct capabilities              | Legal, technical, and financial analysis |
+| Data decomposition         | Partition independent documents or records  | Large document collections               |
+| Hierarchical decomposition | Break major tasks into subtasks recursively | Complex research and planning            |
+| Dynamic decomposition      | Model decides subtasks at runtime           | Open-ended problem-solving               |
 
-A. A fixed prompt chain that runs the same five analysis stages for every target.  
-B. A single retrieval-augmented question-answering call with no task planning.  
-C. An orchestrator–workers system that identifies necessary investigations, assigns bounded specialist tasks, then synthesizes and validates results.  
-D. Five independent workers using a predefined checklist without coordinating synthesis.
+### **Example: Contract Due Diligence**
+
+```
+Contract Portfolio
+        |
+        v
+Document Classification
+        |
+        v
+Parallel Clause Extraction
+  |          |          |
+Liability   Payment   Termination
+  |          |          |
+  +----------+----------+
+             |
+             v
+     Normalize Findings
+             |
+             v
+    Cross-Clause Analysis
+             |
+             v
+    Validate Against Evidence
+             |
+             v
+       Risk Summary
+```
+
+The clause extractions are parallelizable because they can often be evaluated independently. Cross-clause analysis must wait until the relevant extractions are available.
+
+### **Best Practices**
+
+1. ⭐ Use task dependency, not arbitrary task size, to determine sequencing and parallelization.
+2. Define each subtask's input, output, completion criteria, and validation checks.
+3. Minimize unnecessary context transfer between tasks.
+4. Use specialized prompts and tools only where specialization improves outcomes.
+5. Verify intermediate artifacts before using them in downstream reasoning.
+
+Anthropic's context-engineering guidance favors high-signal context, bounded tools, and focused subagent work.
+
+Reference: [Effective context engineering for AI agents](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents?utm_source=chatgpt.com).
+
+### **Exam Traps**
+
+| Trap                                                                | Why tempting                                  | Why wrong                                                                                               |
+| ------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Every complex problem needs multiple agents                         | Agents appear to be natural subtask owners    | A deterministic decomposition may be simpler and more reliable                                          |
+| Run all subtasks concurrently                                       | Maximizes apparent throughput                 | Dependent stages need upstream results                                                                  |
+| Ask Claude to reason step by step instead of decomposing the system | Appears to solve complexity through prompting | Prompt-level reasoning does not provide independent validation, state management, or execution controls |
+| Pass all intermediate outputs to every stage                        | Avoids losing information                     | Excess context increases cost and can reduce relevance                                                  |
+| Skip intermediate validation                                        | Reduces latency                               | Upstream errors can propagate and compound                                                              |
+
+**⭐ Exam heuristic:** Determine the dependency graph first. Parallelize independent work; sequence dependent work; use dynamic planning only where task structure cannot be predetermined.
+
+## **1.6 Align Solutions to Business Value Pillars (Efficiency, Transformation, Productivity, Cost, Performance SLAs)**
+
+### **Core Concept**
+
+AI architecture must justify its complexity through measurable business outcomes.
+
+Technical performance is necessary but insufficient. A solution can achieve high benchmark accuracy yet fail commercially because of latency, operating costs, poor adoption, or excessive human rework.
+
+An architect must connect design decisions to the business-value pillars defined in the task statement.
+
+### **Business Value Matrix**
+
+| Pillar           | Architectural objective                                     | Useful metrics                                   |
+| ---------------- | ----------------------------------------------------------- | ------------------------------------------------ |
+| Efficiency       | Reduce process time and unnecessary steps                   | Turnaround time, automation rate                 |
+| Transformation   | Enable new business capabilities                            | New workflow coverage, adoption, task completion |
+| Productivity     | Increase effective output per worker                        | Accepted cases per hour, rework rate             |
+| Cost             | Reduce total cost of achieving an accepted outcome          | Cost per successful task, cost per document      |
+| Performance SLAs | Meet production reliability and responsiveness requirements | p50/p95/p99 latency, availability, error rate    |
+
+### **Canonical Skeleton**
+
+```
+Business Objective
+       |
+       v
+Measure Existing Baseline
+       |
+       v
+Define Business KPIs and Guardrails
+       |
+       v
+Identify Feasible Architectures
+       |
+       v
+Estimate Quality / Latency / Cost / Risk
+       |
+       v
+Benchmark Using Representative Workloads
+       |
+       v
+Evaluate Trade-Offs
+       |
+       v
+Select Architecture
+       |
+       v
+Pilot and Measure Real Outcomes
+       |
+       v
+Optimize / Scale / Reconsider
+```
+
+### **Cost–Quality–Latency Trade-Offs**
+
+| Design decision        | Potential benefit                                   | Trade-off                                               |
+| ---------------------- | --------------------------------------------------- | ------------------------------------------------------- |
+| Smaller suitable model | Lower cost and often lower latency                  | Possible quality reduction                              |
+| More capable model     | Better performance on difficult tasks               | Potentially higher cost or latency                      |
+| Prompt caching         | Reduced repeated-prefix processing cost and latency | Requires reusable prefixes and suitable cache lifetime  |
+| Message Batches API    | Lower cost for asynchronous workloads               | Not suitable for immediate interactive responses        |
+| Parallel processing    | Reduced elapsed time for independent work           | Higher concurrency and possibly higher spend            |
+| Multi-agent design     | Better exploration of difficult tasks               | Additional calls, coordination, and failure modes       |
+| Extended thinking      | May improve difficult reasoning                     | Additional reasoning budget and possible latency impact |
+| Human review           | Reduced risk of consequential mistakes              | Review cost and longer turnaround time                  |
+
+### **Essential Financial and Operational Metrics**
+
+**Cost per accepted outcome**
+
+\\[ \text{Cost per accepted outcome} = \frac{\text{Total processing + infrastructure + review cost}} {\text{Number of accepted outcomes}} \\]
+
+**Task success rate**
+
+\\[ \text{Task success rate} = \frac{\text{Successfully completed tasks}} {\text{Attempted tasks}} \\]
+
+**Automation rate**
+
+\\[ \text{Automation rate} = \frac{\text{Tasks completed without human intervention}} {\text{Eligible tasks}} \\]
+
+**Approximate net benefit**
+
+\\[ \text{Net benefit} = \text{Value of realized savings and benefits} - \text{Total solution cost} \\]
+
+Track quality and risk guardrails alongside these metrics. A high automation rate is not desirable if it comes with unacceptable errors.
+
+### **Evaluation Strategy**
+
+| Evaluation type          | Best use                                         | Trade-off                                                  |
+| ------------------------ | ------------------------------------------------ | ---------------------------------------------------------- |
+| Deterministic/code-based | JSON validity, exact labels, business rules      | Fast and reproducible, but limited semantic nuance         |
+| LLM-as-judge             | Relevance, completeness, qualitative comparisons | Scalable but requires rubric calibration                   |
+| Human expert evaluation  | Legal, business, and safety-sensitive judgments  | More expensive but necessary for some decisions            |
+| A/B testing              | Comparing production-ready alternatives          | Requires controlled conditions and sufficient observations |
+
+### **Best Practices**
+
+1. ⭐ Optimize for **cost per successful business outcome**, not merely cost per API call.
+2. Use realistic workload evaluations to compare architectures and model configurations.
+3. Measure tail latency, especially p95 and p99, where user experience or SLAs depend on it.
+4. Apply prompt caching to stable, repeatedly reused context and batching to eligible asynchronous workloads.
+5. Include failure handling, human intervention, and infrastructure expenditure in total cost estimates.
+
+References: [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching?utm_source=chatgpt.com), [Batch processing](https://platform.claude.com/docs/en/build-with-claude/batch-processing?utm_source=chatgpt.com), and [Evaluation guidance](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests?utm_source=chatgpt.com).
+
+### **Exam Traps**
+
+| Trap                                               | Why tempting                  | Why wrong                                                              |
+| -------------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------- |
+| Lowest token cost is the best architecture         | Easy to compare financially   | Poor quality may cause retries and human rework                        |
+| Average latency proves an SLA is met               | Simple aggregate metric       | Tail latency may violate customer requirements                         |
+| More accuracy always justifies extra cost          | Prioritizes model performance | Marginal quality improvements may not justify business cost            |
+| Batch processing should be used for every workload | Offers significant discounts  | Asynchronous execution is unsuitable for strict real-time requirements |
+| Human review should always be removed              | Increases apparent automation | Review may be necessary for risk, legal, or operational accountability |
+
+**⭐ Exam heuristic:** Choose the architecture that meets all mandatory quality, security, and latency requirements at the lowest justified total cost. Do not optimize a single metric in isolation.
+
+# **Part 2: Consolidated Sections**
+
+## **Key Facts to Memorize**
+
+### **A. Architecture Definitions**
+
+| Term                 | Definition or rule to remember                             |
+| -------------------- | ---------------------------------------------------------- |
+| ⭐ Augmented LLM      | Claude enhanced with retrieval, tools, or memory           |
+| ⭐ Workflow           | Predefined control flow managed by application code        |
+| ⭐ Agent              | Model dynamically determines actions and tool usage        |
+| Prompt chaining      | Sequential dependent LLM tasks                             |
+| Routing              | Classify input and select an appropriate predefined branch |
+| Parallelization      | Concurrent execution of independent tasks                  |
+| Orchestrator-workers | Dynamically delegated subtasks and centralized synthesis   |
+| Evaluator-optimizer  | Generate, evaluate, and iteratively refine                 |
+| RAG                  | Retrieve external information to ground generation         |
+| Human-in-the-loop    | Human participation or approval at defined decision points |
+
+### **B. Pattern Decision Rules**
+
+| Exam scenario                                    | Best starting choice                                 |
+| ------------------------------------------------ | ---------------------------------------------------- |
+| Known deterministic logic                        | Conventional software                                |
+| Simple unstructured extraction                   | Single Claude call                                   |
+| Questions over internal enterprise documents     | Augmented LLM with retrieval                         |
+| Predictable, ordered processing                  | Prompt chaining                                      |
+| Different predefined categories                  | Routing                                              |
+| Independent analysis                             | Parallelization                                      |
+| Unpredictable, dynamic task sequence             | Agent                                                |
+| Dynamic independent subtasks                     | Orchestrator-workers                                 |
+| Repeated improvement with clear scoring criteria | Evaluator-optimizer                                  |
+| Irreversible or consequential action             | Approval and authorization controls before execution |
+
+**⭐ Always remember:** These are starting choices, not absolute rules. The correct architecture depends on demonstrated requirements and evaluations.
+
+### **C. Claude API and Optimization Features**
+
+| Feature                              | High-yield fact as of July 2026                                                          |
+| ------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Messages API                         | Primary API interface for Claude message-based interactions                              |
+| `tool_use`                           | Claude's request to invoke a tool                                                        |
+| `tool_result`                        | Result supplied back from tool execution                                                 |
+| Client tools                         | Application is responsible for execution and security enforcement                        |
+| MCP                                  | Standardized mechanism for connecting models to tools and external systems               |
+| Prompt caching                       | Reuses eligible repeated prompt prefixes                                                 |
+| Default prompt-cache TTL             | 5 minutes                                                                                |
+| Extended prompt-cache TTL            | 1 hour where supported                                                                   |
+| 5-minute cache write                 | Typically 1.25× base input-token price                                                   |
+| 1-hour cache write                   | Typically 2× base input-token price                                                      |
+| Cache read                           | Typically 0.1× base input-token price                                                    |
+| Message Batches API                  | Asynchronous processing at approximately 50% of standard API token pricing               |
+| Batch processing window              | Up to 24 hours; not an interactive latency guarantee                                     |
+| Extended thinking                    | Additional reasoning capability with budget, cost, and latency implications              |
+| `max_tokens`                         | Configures the maximum generated output tokens, subject to model and API limits          |
+| Structured outputs / JSON validation | Useful for integration contracts; structural validity does not prove factual correctness |
+
+**Version caution:** Model availability, maximum context windows, output-token ceilings, supported thinking configurations, cacheable minimum lengths, rate limits, and deployment-platform support vary. Do not memorize a single universal limit for all models or deployments.
+
+### **D. Evaluation and SLA Metrics**
+
+| Metric                   | What it measures                            | Typical use                       |
+| ------------------------ | ------------------------------------------- | --------------------------------- |
+| Accuracy                 | Proportion of correct predictions           | Classification                    |
+| Precision                | Correct positives among predicted positives | False-positive-sensitive tasks    |
+| Recall                   | Correct positives among actual positives    | Miss-sensitive extraction         |
+| F1                       | Harmonic mean of precision and recall       | Extraction and classification     |
+| Task success rate        | Completed goals / attempted goals           | Agent evaluation                  |
+| Groundedness             | Whether claims are supported by evidence    | RAG                               |
+| Citation correctness     | Whether references substantiate claims      | Research workflows                |
+| p50 latency              | Median request latency                      | Typical responsiveness            |
+| p95 latency              | 95th-percentile latency                     | SLA and tail-performance analysis |
+| p99 latency              | 99th-percentile latency                     | Severe tail-performance analysis  |
+| Availability             | Successful service availability over time   | Reliability SLAs                  |
+| Cost per successful task | Cost normalized by useful outcomes          | Economic efficiency               |
+| Tool error rate          | Failed tool invocations / total invocations | Integration reliability           |
+| Human escalation rate    | Requests requiring human intervention       | Automation effectiveness          |
+
+**Threshold rule:** There is no universal architectural requirement that every Claude solution achieve a particular F1, p95, cost, or success-rate threshold. These targets must be derived from business and risk requirements.
+
+### **E. Non-Negotiable Architectural Rules**
+
+1. ⭐ **Start simple; justify complexity with evaluations.**
+2. Never treat model-generated tool arguments as independently authorized operations.
+3. Never assume a retrieved document or tool response is trustworthy simply because it appears in context.
+4. Do not rely solely on prompts to enforce access control.
+5. Parallelize only when dependencies permit.
+6. Apply stopping conditions and resource budgets to iterative agents.
+7. Validate intermediate outputs when downstream steps depend on them.
+8. Choose grading methods based on the required fidelity: code-based where objective, calibrated LLM grading where nuanced, and human experts where necessary.
+9. Treat human review cost and rework as part of the solution's total cost.
+10. Evaluate end-to-end task success rather than assuming improved individual model responses guarantee business success.
+
+# **5 Exam-Style Questions**
+
+These are original scenario-based practice questions, not questions from the live certification exam. Each has one best answer.
+
+## **Question 1 — Business Problem Translation**
+
+**Task statement: 1.1**
+
+A legal-services organization wants to automate contract review. Its current review process takes approximately three days per contract. Some contracts contain unusual clauses that require legal interpretation. Leadership requests a fully autonomous Claude solution to minimize human involvement.
+
+Which architecture should the solutions architect recommend FIRST?
+
+**A.** Deploy a multi-agent architecture where separate agents negotiate, interpret, and approve every contract.
+
+**B.** Deploy the most capable Claude model available and allow it to make all contractual decisions without human review.
+
+**C.** Identify automatable tasks, define success criteria, use Claude for extraction and analysis, retain appropriate human approval, and measure results against the existing process.
+
+**D.** Fine-tune a model on historical contracts before establishing evaluation criteria or workflow requirements.
 
 **Correct answer: C**
 
-**Explanation:** Task decomposition is dynamic. A lead orchestrator should determine which investigations are needed and delegate bounded work to specialists, then merge results, resolve inconsistencies, and validate source support.
+**Why C is correct:** It begins with task decomposition, measurable success, and risk-aware allocation of work between Claude and humans. It allows the architecture to be validated against real business outcomes before increasing autonomy.
 
-**Why the distractors are wrong:**
+**Why the others are wrong:**
 
-- **A:** Fixed stages cannot adapt efficiently to changing investigation scope.
-- **B:** A single call is poorly suited to extended, multi-step investigation.
-- **D:** Fixed parallel work does not provide dynamic assignment or coherent synthesis.
+- **A:** Introduces complex orchestration and autonomous authority without evidence of need.
+- **B:** Confuses stronger model capability with permission to make consequential decisions.
+- **D:** Assumes model customization is necessary before identifying failure modes, evaluation criteria, or simpler alternatives.
 
-**Exam takeaway:** Unpredictable decomposition + specialist research = orchestrator–workers.
+⭐ **Exam takeaway:** Business objectives and operational accountability come before model or agent selection.
 
-### Question 4 — Architecture under performance constraints
+## **Question 2 — Architectural Pattern Selection**
 
-**Difficulty:** Hard
+**Task statements: 1.2 and 1.3**
 
-An internal HR assistant answers 2,000 daily policy questions. Policies are maintained centrally, most questions need only one lookup, and the application has a P95 latency target of two seconds. Accuracy and traceable sources are mandatory.
+A financial-services company must process thousands of standardized loan application documents. The required process is fixed: extract information, validate fields against known rules, generate an application summary, and send flagged cases to a human reviewer.
 
-**What is the BEST initial architecture to evaluate?**
+Management prioritizes predictability, traceability, and operational consistency.
 
-A. A single retrieval-augmented Claude interaction using relevant policy passages, citations, and validation, benchmarked against the P95 SLA.  
-B. A five-agent system that independently searches and debates every policy question.  
-C. An autonomous agent that repeatedly searches until it decides the answer is sufficiently complete.  
-D. A long sequential chain that sends every question through five model-based review stages.
+Which architecture is BEST?
 
-**Correct answer: A**
+**A.** An autonomous agent that dynamically determines the steps and tools for each application.
 
-**Explanation:** Most requests fit a simple grounded-response architecture. A bounded retrieval-plus-generation path is easier to optimize, validate, and trace. The two-second P95 must still be tested against realistic loads; it is not guaranteed by selecting this pattern.
+**B.** A predefined workflow with Claude-based extraction and summarization, deterministic validation gates, and human escalation.
 
-**Why the distractors are wrong:**
+**C.** A large orchestrator-workers system with independently planning subagents for each application.
 
-- **B:** Adds excessive coordination for routine lookup tasks.
-- **C:** Creates unbounded latency variability.
-- **D:** Adds serial model calls without a clear quality benefit.
+**D.** A single Claude prompt that extracts, validates, and approves applications without intermediate checks.
 
-**Exam takeaway:** For routine grounded Q&A with strict latency, evaluate the simplest retrieval-augmented design first.
+**Correct answer: B**
 
-### Question 5 — End-to-end design and feedback
+**Why B is correct:** The process steps are predictable. A predefined workflow enables traceability, controlled execution, deterministic field validation, and risk-based review.
 
-**Difficulty:** Hard — **Select TWO answers**
+**Why the others are wrong:**
 
-A Claude-powered contract-analysis workflow meets its average latency target but sometimes misses critical clauses. Reviewers regularly correct reports. Leadership wants the system to improve without creating unapproved changes to production decisions.
+- **A:** Unnecessary autonomous planning increases unpredictability for a fixed process.
+- **C:** Adds delegation and coordination overhead without clear benefit.
+- **D:** Combines multiple responsibilities without adequate validation or approval controls.
 
-**Which TWO architectural changes are MOST appropriate?**
+⭐ **Exam takeaway:** A fixed business process generally favors a workflow over autonomous orchestration.
 
-A. Capture structured reviewer corrections with source references and link them to the original model outputs.  
-B. Allow the model to rewrite production instructions immediately after each negative reviewer comment.  
-C. Increase the number of autonomous agents without first diagnosing the errors.  
-D. Create a versioned evaluation dataset from reviewed examples and test candidate changes before rollout.  
-E. Measure only average response latency because the workflow already meets its performance target.
+## **Question 3 — Multi-Agent Orchestration**
 
-**Correct answers: A and D**
+**Task statement: 1.4**
 
-**Explanation:** Reviewer corrections create usable quality signals if they are structured and linked to the source evidence. A versioned evaluation dataset supports controlled comparison of prompt, retrieval, and workflow changes before release. This is a governed feedback loop.
+An enterprise intelligence platform must produce an extensive market-entry report covering financial performance, competitors, regulations, and technology trends.
 
-**Why the distractors are wrong:**
+The research directions are largely independent, the appropriate sources cannot be predicted beforehand, and information gathering requires substantial tool usage.
 
-- **B:** Allows unreviewed production changes that can introduce new failures.
-- **C:** Expands architecture without identifying the cause of clause misses.
-- **E:** Ignores quality and does not assess tail-latency commitments.
+What is the BEST architecture?
 
-**Exam takeaway:** Feedback becomes useful when converted into validated evaluations and controlled releases.
+**A.** One large prompt containing every available enterprise document.
 
-### Answer key
+**B.** A sequential workflow in which one model examines every topic in a predetermined order.
 
-| Question | Correct answer | Core concept |
-|---|---|---|
-| 1 | **B** | Requirements first |
-| 2 | **B** | Controlled workflow for known stages |
-| 3 | **C** | Dynamic orchestrator–workers decomposition |
-| 4 | **A** | Simplicity, grounded retrieval, P95 validation |
-| 5 | **A + D** | Governed feedback and evaluation |
+**C.** A lead Claude agent that dynamically delegates bounded research tasks to parallel specialist agents and synthesizes evidence-backed results.
 
----
+**D.** Four independent specialist agents that publish their findings directly, without shared synthesis or reconciliation.
 
-## 6. Final Revision Sheet
+**Correct answer: C**
 
-| If the scenario says… | Prefer to consider… |
-|---|---|
-| Known and repeatable processing stages | Deterministic workflow |
-| Unpredictable next steps and tool use | Bounded autonomous agent |
-| Unpredictable specialist task decomposition | Orchestrator–workers |
-| Independent, predefined tasks | Parallelization |
-| Different classes of user requests | Routing |
-| Repeatable refinement against criteria | Evaluator–optimizer |
-| Internal knowledge required | Retrieval-augmented LLM |
-| High-impact or irreversible actions | Explicit authorization and human approval |
-| Strict latency SLAs | Minimize critical-path work; measure P95 |
-| Business sponsor requests transformation | Establish baseline, measurable outcomes, total cost, and risk |
+**Why C is correct:** It combines dynamic planning, specialization, independent exploration, and centralized synthesis. Subagents can operate with focused contexts while the lead agent coordinates the overall research objective.
 
-### High-value study sequence
+**Why the others are wrong:**
 
-1. Memorize **workflow vs. agent** and **fixed parallelism vs. dynamic orchestration**.
-2. Study all five foundational workflow patterns: prompt chaining, routing, parallelization, orchestrator–workers, and evaluator–optimizer.
-3. Practice identifying whether the **application** or the **model** owns execution control.
-4. For each scenario, state one decisive reason to prefer the simplest adequate design.
-5. Validate every architecture against business value, quality, cost, operational risk, and P95 latency where applicable.
+- **A:** Produces unnecessary context volume and cannot adaptively investigate missing information.
+- **B:** May work but loses opportunities for parallel exploration and flexible delegation.
+- **D:** Lacks a mechanism to resolve contradictions, detect gaps, and produce a coherent final result.
 
-### Recommended primary reading (published before July 2026)
+⭐ **Exam takeaway:** Complex, open-ended, parallelizable research is a strong candidate for orchestrator-workers.
 
-1. [Anthropic — Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — Foundational workflow and agent patterns.
-2. [Anthropic — How We Built Our Multi-Agent Research System](https://www.anthropic.com/research/multi-agent-research-system) — Dynamic delegation, specialist workers, and synthesis.
-3. [Anthropic — Effective Context Engineering for AI Agents](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents) — Context management and delegation discipline.
+## **Question 4 — Decomposition and Dependencies**
 
----
+**Task statement: 1.5**
 
-## Final takeaway
+An AI-powered due-diligence workflow performs document classification, clause extraction, cross-document risk analysis, and report generation.
 
-**Domain 1 evaluates architectural judgment rather than the ability to propose the most sophisticated system.** For each scenario, explain:
+The architect wants to reduce total processing time while retaining verifiable intermediate outputs.
 
-- **Why** the selected pattern matches the task structure.
-- **Why** a simpler architecture is or is not sufficient.
-- **How** the system controls failure, permissions, and consequential actions.
-- **How** its quality, cost, and SLA performance will be measured.
-- **How** feedback produces reliable, governed improvements.
+Which decomposition strategy is BEST?
 
-*Scope note: This guide uses the July 2026 Domain 1 objectives supplied with the reference guide and excludes later examination revisions. The questions, frameworks, and decision heuristics are original study material, not official Anthropic exam items.*
+**A.** Execute every stage simultaneously, even when later stages require earlier outputs.
+
+**B.** Use independent parallel workers for clause extraction, then perform dependent risk analysis and report generation sequentially, with validation between stages.
+
+**C.** Put all documents in a single prompt and ask Claude to complete the entire process without intermediate artifacts.
+
+**D.** Create separate autonomous agents for every processing step regardless of task complexity.
+
+**Correct answer: B**
+
+**Why B is correct:** It respects the dependency graph while exploiting safe parallelism. Intermediate validation reduces the risk of errors propagating into downstream analysis.
+
+**Why the others are wrong:**
+
+- **A:** Violates data dependencies and can cause incomplete or inconsistent outputs.
+- **C:** Reduces observability and opportunities to detect intermediate failures.
+- **D:** Adds autonomy without demonstrating that dynamic control is needed.
+
+⭐ **Exam takeaway:** Parallelize independent work, sequence dependent operations, and validate stage boundaries.
+
+## **Question 5 — Business Value and Performance SLAs**
+
+**Task statement: 1.6**
+
+A customer-support platform must respond to users within a defined p95 latency target and maintain an agreed minimum quality score.
+
+Three architectures have been evaluated:
+
+| Architecture           | Quality | p95 latency | Cost per successful task |
+| ---------------------- | ------- | ----------- | ------------------------ |
+| Single Claude workflow | 94%     | 2.1 seconds | $0.04                    |
+| Multi-agent workflow   | 97%     | 8.3 seconds | $0.15                    |
+| Smaller-model workflow | 88%     | 1.2 seconds | $0.02                    |
+
+The business requires at least **93% quality** and **p95 latency below 4 seconds**.
+
+Which option is BEST?
+
+**A.** Multi-agent workflow, because it has the highest quality.
+
+**B.** Smaller-model workflow, because it has the lowest latency and cost.
+
+**C.** Single Claude workflow, because it satisfies both mandatory constraints at the lowest cost among qualifying options.
+
+**D.** Multi-agent workflow using batch processing, because batching guarantees faster interactive responses.
+
+**Correct answer: C**
+
+**Why C is correct:** It meets both binding constraints. The multi-agent architecture violates latency requirements, and the smaller-model workflow fails the quality requirement.
+
+**Why the others are wrong:**
+
+- **A:** Quality alone does not override a mandatory SLA.
+- **B:** Cost and speed cannot compensate for failure to meet the minimum quality threshold.
+- **D:** Batch processing is asynchronous and does not guarantee low interactive latency.
+
+⭐ **Exam takeaway:** Identify binding constraints first, eliminate infeasible designs, and then optimize cost and business value among the feasible alternatives.
+
+# **Last-Minute Revision Checklist**
+
+- ⭐ Distinguish augmented LLM, workflow, agent, and multi-agent architectures.
+- Choose deterministic code when an LLM is unnecessary.
+- Memorize the five core workflow patterns: chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer.
+- Know when parallel delegation is appropriate and when dependencies require sequencing.
+- Define clear responsibilities, context boundaries, output contracts, and stopping criteria for agents.
+- Include validation, authorization, observability, feedback, and failure handling in production architectures.
+- Remember prompt caching for repeated context and batch processing for nonurgent asynchronous workloads.
+- Know the differences between task accuracy, task success rate, cost per successful task, and p95 latency.
+- Apply human approval to consequential actions where required by risk and accountability.
+- ⭐ Select the simplest architecture that meets every binding business, quality, risk, and SLA requirement.
